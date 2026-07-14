@@ -60,8 +60,12 @@ export function redact(text) {
 function buildTokens(stagedFiles) {
   const map = new Map();
   for (const f of stagedFiles) {
-    const tokens = new Set([f.toLowerCase()]);
+    const tokens = new Set();
     const base = path.basename(f);
+    // A bare generic basename (root-level package.json, README.md, …) matches
+    // half of all chats; such files get no weak tokens — only the strong
+    // edited-this-file signal can match them.
+    if (f.includes('/')) tokens.add(f.toLowerCase());
     if (!GENERIC_BASENAMES.has(base)) {
       tokens.add(base.toLowerCase());
       const stem = base.replace(/\.[^.]+$/, '');
