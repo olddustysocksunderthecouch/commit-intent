@@ -1,10 +1,16 @@
 # commit-intent
 
-Every commit gets a provenance doc — the *why* behind the change, distilled from the AI chats that produced it.
+**The newest kind of technical debt has nothing to do with messy code — it's lost context.**
 
-When you commit, a pre-commit hook finds the Claude Code sessions and Cursor composers that plausibly produced your staged files, extracts the **user's intent** (what was asked, how it evolved, corrections, constraints), the **key decisions** and who made them, and a skim of what was built — then writes `docs/intents/<timestamp>_<feature>.md` and stages it into the same commit.
+You know the session: a long back-and-forth with Claude or Cursor, edge cases argued through, 300 lines of solid logic at the end of it. You accept, run the tests, commit — and clear the window. The most valuable part of the engineering process, treated like a disposable wrapper. Two months later someone opens that file, stares at a wall of logic nobody physically typed, and git can tell them everything except the only thing that matters: **why**.
 
-Months later, `git log` tells you *what* changed. `docs/intents/` tells you *why*.
+The frustrating part: the why was never lost. It's sitting in chat logs on your machine right now — it just evaporates because nothing carries it forward.
+
+commit-intent is the carrier. A pre-commit hook reads the session transcripts already on disk, matches conversations to your staged files, and uses the Claude Code CLI you already have to distill the original intent — the ask, how it evolved, the corrections and constraints — plus the key decisions and who made them, into `docs/intents/<timestamp>_<feature>.md`, staged into the same commit as the code it explains.
+
+The *why* now travels with the *what*. Same repo, same commit — for future-you, for a teammate, for the next AI agent that has to work on the code.
+
+No new platform, no new workflow: it runs on the tools and AI already on your machine. Hand-typed hotfixes match no chat and produce no doc, and `INTENT_SKIP=1` waves any commit through untouched.
 
 > Useful? **[A star](https://github.com/olddustysocksunderthecouch/commit-intent/stargazers)** is how I know to keep building — [here's why that matters more than usual](#is-this-worth-expanding).
 
