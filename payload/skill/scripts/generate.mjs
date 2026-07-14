@@ -93,6 +93,11 @@ function parseOutput(raw, fallbackSlugSource) {
     text = (text.slice(0, m.index) + text.slice(m.index + m[0].length)).trim();
   }
   if (!slug) slug = slugify(fallbackSlugSource) || 'staged-changes';
+  // The model may decline outright: `SOURCES: none` means it judged every
+  // matched chat irrelevant to the staged changes, and no doc should exist.
+  if (/^\s*SOURCES:\s*none\b/im.test(text)) {
+    return { noMatch: true, slug, usedIndexes: null, body: '' };
+  }
   let usedIndexes = null;
   const s = text.match(/^\s*SOURCES:\s*([0-9][0-9,\s]*)$/m);
   if (s) {
@@ -238,7 +243,12 @@ async function main() {
   const promptTemplate = fs.readFileSync(path.join(SKILL_DIR, 'prompt.md'), 'utf8');
   const prompt = `${promptTemplate}\n\n${GENERATOR_MARKER}\n${JSON.stringify(bundle, null, 1)}\n`;
   const raw = await runClaude(prompt);
-  const { slug, usedIndexes, body } = parseOutput(raw, branch);
+  const { slug, usedIndexes, noMatch, body } = parseOutput(raw, branch);
+
+  if (noMatch) {
+    log(`model reviewed ${evidence.chats.length} matched chat(s) and judged none applicable to the staged changes; skipping intent doc`);
+    return;
+  }
 
   // The frontmatter lists only the chats the doc actually drew on; matched-but
   // -irrelevant chats stay out. If the SOURCES line is missing or garbled, keep

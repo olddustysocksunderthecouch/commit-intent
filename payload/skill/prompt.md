@@ -15,6 +15,10 @@ Output format — follow exactly:
 - Second line: `SOURCES: <comma-separated chat index numbers you actually drew on>` (e.g. `SOURCES: 1,3`). Each chat in the bundle has an `index` field. List only chats whose content informed the document — matching a filename is not enough.
 - Then the document body in markdown: `# <Human-readable title>`, followed by these sections in order: `## Intent`, `## Key decisions`, `## What was built`, `## Follow-ups`.
 - No YAML frontmatter (tooling adds it). No code fences around the output. Total length under 120 lines.
+- **If NONE of the chats plausibly explain the staged changes**, output exactly two lines and nothing else:
+  `SLUG: no-match`
+  `SOURCES: none`
+  The tooling then skips the intent doc for this commit. That is the correct outcome when the evidence is noise — never pad out a document from unrelated chats.
 
 Rules:
 

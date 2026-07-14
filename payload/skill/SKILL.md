@@ -42,6 +42,6 @@ sh .claude/skills/commit-intent/scripts/generate.sh --files=src/foo.ts,src/bar.t
 ## Behaviour notes for Claude
 
 - When invoked as a skill, run `--dry-run` first and show the user the matched chats, then generate unless they object. After generating, offer to read the doc back and refine wording — edits are safe because `docs/intents/` is excluded from `staged_diff_sha`; re-stage the doc after editing.
-- Skips are normal, not failures: nothing staged, no matching chats, merge/rebase in progress, or an up-to-date doc already staged.
+- Skips are normal, not failures: nothing staged, no matching chats, the model judging every matched chat irrelevant (`SOURCES: none`), merge/rebase in progress, or an up-to-date doc already staged.
 - If generation reports a failure, the commit still proceeds by design. Diagnose with `--self-test` and `INTENT_DEBUG=1`.
 - Never run `generate.sh` in a loop or on unstaged work; it reads the index.

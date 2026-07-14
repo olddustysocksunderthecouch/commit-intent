@@ -63,6 +63,7 @@ No Claude Code on the machine but want an agent-led install? See [INSTALL-AGENT.
 
 - **Claude Code**: session transcripts under `~/.claude/projects/` for the repo. Strong signal: the session's Edit/Write tool calls touched a staged file. Weak signal: staged filenames mentioned in conversation. 14-day window, recency-boosted.
 - **Cursor**: composers in Cursor's global SQLite store, matched by filename mentions in message text (read-only, lock-tolerant).
+- **A model-side relevance gate backstops the matcher**: filename matching deliberately over-collects, so the extractor both filters the cited sources and can decline entirely (`SOURCES: none`) — a commit whose matched chats turn out to be noise gets no doc, not a fabricated one.
 - Evidence is size-capped, secret-redacted (key/token/JWT patterns), and user messages are prioritised over assistant output. The generator's own headless sessions are marker-excluded so it never matches itself.
 
 ## Privacy note
