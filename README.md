@@ -1,12 +1,10 @@
 # commit-intent
 
-**The newest kind of technical debt has nothing to do with messy code — it's lost context.**
+**A pre-commit hook that auto-writes a `why` doc for each commit by mining the Claude Code / Cursor chats that produced it.**
 
-You know the session: a long back-and-forth with Claude or Cursor, edge cases argued through, 300 lines of solid logic at the end of it. You accept, run the tests, commit — and clear the window. The most valuable part of the engineering process, treated like a disposable wrapper. Two months later someone opens that file, stares at a wall of logic nobody physically typed, and git can tell them everything except the only thing that matters: **why**.
+Git records *what* changed and *who* typed it. But when AI writes a 300-line diff nobody hand-typed, the reasoning — the ask, the edge cases, the corrections — never makes it into the repo. That's the newest kind of technical debt: not messy code, lost context. And the maddening part is the *why* isn't gone. It's sitting in chat logs on your disk right now; nothing just carries it forward.
 
-The frustrating part: the why was never lost. It's sitting in chat logs on your machine right now — it just evaporates because nothing carries it forward.
-
-commit-intent is the carrier. A pre-commit hook reads the session transcripts already on disk, matches conversations to your staged files, and uses the Claude Code CLI you already have to distill the original intent — the ask, how it evolved, the corrections and constraints — plus the key decisions and who made them, into `docs/intents/<timestamp>_<feature>.md`, staged into the same commit as the code it explains.
+`commit-intent` is the carrier. At commit time it matches the relevant session transcripts to your staged files and uses the Claude Code CLI you already have to distill the intent — how the ask evolved, the constraints, the key decisions and who made them — into `docs/intents/<timestamp>_<feature>.md`, staged into the same commit as the code it explains.
 
 The *why* now travels with the *what*. Same repo, same commit — for future-you, for a teammate, for the next AI agent that has to work on the code.
 
@@ -36,6 +34,10 @@ That's the whole thing. It copies the engine into `.claude/skills/commit-intent/
 One headless `claude -p` summarization call (~15–45 s, model configurable via `INTENT_MODEL`, default `sonnet`) — and only when chats actually match the staged files. No matches, merge/rebase commits, amend re-runs (deduped by a staged-diff hash), and `CI` environments all skip instantly. **Nothing ever blocks a commit**: every failure path is a warning.
 
 ## Day-to-day
+
+You just commit. It runs. There's nothing to remember from the get-go.
+
+Everything below is optional — overrides and escape hatches worth knowing about, but not needed to use the tool:
 
 ```sh
 INTENT_SKIP=1 git commit …    # skip one commit (or --no-verify)
