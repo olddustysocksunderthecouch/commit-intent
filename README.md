@@ -2,11 +2,11 @@
 
 **A pre-commit hook that auto-writes a `why` doc for each commit by mining the Claude Code / Cursor chats that produced it.**
 
-Git records *what* changed and *who* typed it. But when AI writes a 300-line diff nobody hand-typed, the reasoning — the ask, the edge cases, the corrections — never makes it into the repo. That's the newest kind of technical debt: not messy code, lost context. And the maddening part is the *why* isn't gone. It's sitting in chat logs on your disk right now; nothing just carries it forward.
+Git records _what_ changed and _who_ typed it. But when AI writes a 300-line diff nobody hand-typed, the reasoning — the ask, the edge cases, the corrections — never makes it into the repo. That's the newest kind of technical debt: not messy code, lost context. And the maddening part is the _why_ isn't gone. It's sitting in chat logs on your disk right now; nothing just carries it forward.
 
 `commit-intent` is the carrier. At commit time it matches the relevant session transcripts to your staged files and uses the Claude Code CLI you already have to distill the intent — how the ask evolved, the constraints, the key decisions and who made them — into `docs/intents/<timestamp>_<feature>.md`, staged into the same commit as the code it explains.
 
-The *why* now travels with the *what*. Same repo, same commit — for future-you, for a teammate, for the next AI agent that has to work on the code.
+The _why_ now travels with the _what_. Same repo, same commit — for future-you, for a teammate, for the next AI agent that has to work on the code.
 
 No new platform, no new workflow: it runs on the tools and AI already on your machine. Hand-typed hotfixes match no chat and produce no doc, and `INTENT_SKIP=1` waves any commit through untouched.
 
@@ -47,17 +47,21 @@ sh .claude/skills/commit-intent/scripts/generate.sh --self-test  # source health
 
 Knobs: `INTENT_MODEL`, `INTENT_TIMEOUT_MS`, `INTENT_CLAUDE_BIN`, `INTENT_DEBUG=1`. In Claude Code, the repo gains a `/commit-intent` skill wrapping the same engine.
 
+## Updating
+
+Re-run the installer: `npx github:olddustysocksunderthecouch/commit-intent --update`. Pin a version with `npx github:olddustysocksunderthecouch/commit-intent#v0.2.0`.
+
 ## Installer flags
 
-| Flag | Effect |
-|---|---|
-| `--update` | overwrite locally modified payload files (how you take new versions) |
-| `--check` | drift report vs this version; exit 1 on drift (CI-friendly) |
-| `--uninstall` | remove payload + managed hook block; keeps generated docs |
-| `--e2e` | attempt one real generation after install |
-| `--agent` | let Claude wire the hook interactively when auto-wiring can't (lefthook, pre-commit framework, global hooksPath) |
-| `--agent-verify` | let Claude verify the finished install and report |
-| `--yes` | non-interactive |
+| Flag             | Effect                                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--update`       | overwrite locally modified payload files (how you take new versions)                                             |
+| `--check`        | drift report vs this version; exit 1 on drift (CI-friendly)                                                      |
+| `--uninstall`    | remove payload + managed hook block; keeps generated docs                                                        |
+| `--e2e`          | attempt one real generation after install                                                                        |
+| `--agent`        | let Claude wire the hook interactively when auto-wiring can't (lefthook, pre-commit framework, global hooksPath) |
+| `--agent-verify` | let Claude verify the finished install and report                                                                |
+| `--yes`          | non-interactive                                                                                                  |
 
 No Claude Code on the machine but want an agent-led install? See [INSTALL-AGENT.md](INSTALL-AGENT.md) for a paste-into-any-agent flow.
 
@@ -72,17 +76,13 @@ No Claude Code on the machine but want an agent-led install? See [INSTALL-AGENT.
 
 Intent docs quote and paraphrase your AI chats and are **committed to the repo**. The collector redacts common secret patterns and the prompt forbids reproducing credentials, but treat the feature as "chat excerpts become repo content" and make sure your team is comfortable with that. Skip any sensitive commit with `INTENT_SKIP=1`.
 
-## Updating
-
-Re-run the installer: `npx github:olddustysocksunderthecouch/commit-intent --update`. Pin a version with `npx github:olddustysocksunderthecouch/commit-intent#v0.2.0`.
-
 ## Is this worth expanding?
 
-There's a small irony in shipping a provenance tool: `npx github:…` leaves me no trace of *your* intent. This repo has exactly the problem it solves — I can't tell the difference between "installed once, shrugged" and "quietly documenting every commit at three companies."
+There's a small irony in shipping a provenance tool: `npx github:…` leaves me no trace of _your_ intent. This repo has exactly the problem it solves — I can't tell the difference between "installed once, shrugged" and "quietly documenting every commit at three companies."
 
 GitHub gives you one signal that costs a single click: **if commit-intent earned a place in your workflow, [star the repo](https://github.com/olddustysocksunderthecouch/commit-intent/stargazers)** ⭐. The star count is, literally, the input that decides how much gets built next.
 
-Want to steer *what* gets built rather than just *whether*? [Open an issue](https://github.com/olddustysocksunderthecouch/commit-intent/issues/new) describing the one thing that would make this indispensable for your team — a real use case outranks any number of upvotes.
+Want to steer _what_ gets built rather than just _whether_? [Open an issue](https://github.com/olddustysocksunderthecouch/commit-intent/issues/new) describing the one thing that would make this indispensable for your team — a real use case outranks any number of upvotes.
 
 ## Maintainers wanted
 

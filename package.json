@@ -1,6 +1,6 @@
 {
   "name": "commit-intent",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Every commit gets a provenance doc distilled from the Claude Code / Cursor chats that produced it. One-command installer.",
   "type": "module",
   "bin": {
