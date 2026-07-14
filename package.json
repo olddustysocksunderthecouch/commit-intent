@@ -1,0 +1,33 @@
+{
+  "name": "commit-intent",
+  "version": "0.1.0",
+  "description": "Every commit gets a provenance doc distilled from the Claude Code / Cursor chats that produced it. One-command installer.",
+  "type": "module",
+  "bin": {
+    "commit-intent": "bin/install.mjs"
+  },
+  "files": [
+    "bin",
+    "payload",
+    "INSTALL-AGENT.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olddustysocksunderthecouch/commit-intent.git"
+  },
+  "keywords": [
+    "git-hooks",
+    "provenance",
+    "claude-code",
+    "cursor",
+    "commit",
+    "documentation"
+  ],
+  "author": "Adrian Bunge",
+  "license": "MIT"
+}
