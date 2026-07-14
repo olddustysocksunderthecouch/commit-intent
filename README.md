@@ -6,6 +6,8 @@ When you commit, a pre-commit hook finds the Claude Code sessions and Cursor com
 
 Months later, `git log` tells you *what* changed. `docs/intents/` tells you *why*.
 
+> Useful? **[A star](https://github.com/olddustysocksunderthecouch/commit-intent/stargazers)** is how I know to keep building — [here's why that matters more than usual](#is-this-worth-expanding).
+
 ## Install
 
 Run inside the target repository:
@@ -63,7 +65,28 @@ Intent docs quote and paraphrase your AI chats and are **committed to the repo**
 
 ## Updating
 
-Re-run the installer: `npx github:olddustysocksunderthecouch/commit-intent --update`. Pin a version with `npx github:olddustysocksunderthecouch/commit-intent#v0.1.0`.
+Re-run the installer: `npx github:olddustysocksunderthecouch/commit-intent --update`. Pin a version with `npx github:olddustysocksunderthecouch/commit-intent#v0.2.0`.
+
+## Is this worth expanding?
+
+There's a small irony in shipping a provenance tool: `npx github:…` leaves me no trace of *your* intent. This repo has exactly the problem it solves — I can't tell the difference between "installed once, shrugged" and "quietly documenting every commit at three companies."
+
+GitHub gives you one signal that costs a single click: **if commit-intent earned a place in your workflow, [star the repo](https://github.com/olddustysocksunderthecouch/commit-intent/stargazers)** ⭐. The star count is, literally, the input that decides how much gets built next.
+
+Want to steer *what* gets built rather than just *whether*? [Open an issue](https://github.com/olddustysocksunderthecouch/commit-intent/issues/new) describing the one thing that would make this indispensable for your team — a real use case outranks any number of upvotes.
+
+## Maintainers wanted
+
+This started as a one-repo itch and works today, but the interesting version is bigger than one maintainer. If you'd like to co-own a piece of it, open an issue introducing yourself — or just arrive with a PR. Directions that need an owner:
+
+- **Jira / Linear MCP integration** — enrich intent docs with the ticket behind the branch: acceptance criteria, discussion, and decision trail alongside the chat evidence.
+- **More chat sources** — Windsurf, GitHub Copilot chat, Codex CLI, aider, Gemini CLI. Each is one self-contained collector in `payload/skill/scripts/collect.mjs` (see `scanCursor` for the shape: find candidates, extract user/assistant messages, return chats).
+- **Auto-wiring for lefthook and the pre-commit framework** — today the installer prints instructions instead of editing YAML.
+- **Windows support** — hook bootstrap and paths under Git Bash are currently best-effort.
+- **Backfill** — generate intent docs for historical commits, commit hashes included.
+- **npm publish + release automation** — when GitHub-only distribution outgrows itself.
+
+The whole codebase is dependency-free Node — two scripts in `payload/`, one installer in `bin/` — and reads end to end in twenty minutes.
 
 ## License
 
