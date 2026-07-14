@@ -93,6 +93,12 @@ function parseOutput(raw, fallbackSlugSource) {
     text = (text.slice(0, m.index) + text.slice(m.index + m[0].length)).trim();
   }
   if (!slug) slug = slugify(fallbackSlugSource) || 'staged-changes';
+  let usedIndexes = null;
+  const s = text.match(/^\s*SOURCES:\s*([0-9][0-9,\s]*)$/m);
+  if (s) {
+    usedIndexes = s[1].split(',').map((n) => parseInt(n.trim(), 10)).filter((n) => Number.isInteger(n) && n > 0);
+    text = (text.slice(0, s.index) + text.slice(s.index + s[0].length)).trim();
+  }
   if (text.length < 200 || !/^##\s+Intent/m.test(text)) {
     if (DEBUG) {
       const dump = path.join(os.tmpdir(), `commit-intent-raw-${Date.now()}.txt`);
@@ -101,7 +107,7 @@ function parseOutput(raw, fallbackSlugSource) {
     }
     throw new Error('model output failed validation (missing "## Intent" section or too short)');
   }
-  return { slug, body: text };
+  return { slug, usedIndexes, body: text };
 }
 
 function frontmatter({ date, branch, head, stagedDiffSha, chats, files }) {
@@ -212,7 +218,7 @@ async function main() {
     stagedFiles: matchable,
     diffstat,
     window: evidence.window,
-    chats: evidence.chats,
+    chats: evidence.chats.map((c, i) => ({ index: i + 1, ...c })),
   };
 
   const summary = evidence.chats
@@ -232,10 +238,26 @@ async function main() {
   const promptTemplate = fs.readFileSync(path.join(SKILL_DIR, 'prompt.md'), 'utf8');
   const prompt = `${promptTemplate}\n\n${GENERATOR_MARKER}\n${JSON.stringify(bundle, null, 1)}\n`;
   const raw = await runClaude(prompt);
-  const { slug, body } = parseOutput(raw, branch);
+  const { slug, usedIndexes, body } = parseOutput(raw, branch);
+
+  // The frontmatter lists only the chats the doc actually drew on; matched-but
+  // -irrelevant chats stay out. If the SOURCES line is missing or garbled, keep
+  // the full matched list — provenance must never be silently lost.
+  let sourceChats = evidence.chats;
+  if (usedIndexes) {
+    const used = evidence.chats.filter((_, i) => usedIndexes.includes(i + 1));
+    if (used.length) {
+      sourceChats = used;
+      if (used.length < evidence.chats.length) {
+        log(`sources: doc cites ${used.length} of ${evidence.chats.length} matched chat(s); dropping the rest from frontmatter`);
+      }
+    } else {
+      log('sources: SOURCES line matched no chats; keeping all matched chats in frontmatter');
+    }
+  }
 
   const doc =
-    frontmatter({ date: isoWithOffset(now), branch, head, stagedDiffSha, chats: evidence.chats, files: matchable }) + '\n' + body + '\n';
+    frontmatter({ date: isoWithOffset(now), branch, head, stagedDiffSha, chats: sourceChats, files: matchable }) + '\n' + body + '\n';
 
   fs.mkdirSync(path.join(repoRoot, 'docs', 'intents'), { recursive: true });
   let rel = `docs/intents/${fileStamp(now)}_${slug}.md`;

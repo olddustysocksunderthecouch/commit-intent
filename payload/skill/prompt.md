@@ -12,12 +12,14 @@ Your job, in priority order:
 Output format — follow exactly:
 
 - First line: `SLUG: <kebab-case-feature-name>` (2–6 words naming the dominant change, e.g. `SLUG: joint-mandate-detection`).
+- Second line: `SOURCES: <comma-separated chat index numbers you actually drew on>` (e.g. `SOURCES: 1,3`). Each chat in the bundle has an `index` field. List only chats whose content informed the document — matching a filename is not enough.
 - Then the document body in markdown: `# <Human-readable title>`, followed by these sections in order: `## Intent`, `## Key decisions`, `## What was built`, `## Follow-ups`.
 - No YAML frontmatter (tooling adds it). No code fences around the output. Total length under 120 lines.
 
 Rules:
 
 - Never invent intent. If the evidence is thin or ambiguous, say so plainly.
+- Some matched chats may be irrelevant to the staged changes despite mentioning the same filenames — disregard their content entirely and leave them out of `SOURCES`.
 - If the staged changes span multiple unrelated workstreams, give each its own subsection under `## Intent` and pick the dominant one for the slug.
 - Chats may include work beyond the staged files; focus on what plausibly produced the staged changes — the staged file list and diffstat are your anchor.
 - Never reproduce secrets, API keys, tokens, connection strings, or personal data — paraphrase around them.

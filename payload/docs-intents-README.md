@@ -6,7 +6,7 @@ Commit provenance, generated automatically. Each doc captures the *why* behind o
 
 The repo's pre-commit hook runs `.claude/skills/commit-intent/scripts/generate.sh`, which matches staged files against recent chat transcripts, distills them with one headless `claude -p` call, writes `docs/intents/<local-time>_<feature-slug>.md`, and stages it into the same commit. Fail-open: any problem (no chats matched, model timeout, missing binary) is a warning, never a blocked commit.
 
-Frontmatter on each doc lists the source sessions, the files staged at generation time, and a `staged_diff_sha` used to avoid regenerating for the same staged tree (e.g. on `--amend`).
+Frontmatter on each doc lists the source chats the document actually drew on (matched-but-irrelevant chats are dropped), the files staged at generation time, and a `staged_diff_sha` used to avoid regenerating for the same staged tree (e.g. on `--amend`).
 
 ## Day-to-day
 
